@@ -1,0 +1,165 @@
+{
+  "metadata": {
+    "version": 1,
+    "disable_limits": false
+  },
+  "nodes": [
+    {
+      "node_id": "c1f880fb-d6ce-48e1-be40-92980f1e347a",
+      "type": "SOURCE",
+      "operator": "sagemaker.s3_source_0.1",
+      "parameters": {
+        "dataset_definition": {
+          "__typename": "S3CreateDatasetDefinitionOutput",
+          "datasetSourceType": "S3",
+          "name": "yum-yum-ice-cream.csv",
+          "description": null,
+          "s3ExecutionContext": {
+            "__typename": "S3ExecutionContext",
+            "s3Uri": "s3://sagemaker-studio-nj5a1btccw/yum-yum-ice-cream.csv",
+            "s3ContentType": "csv",
+            "s3HasHeader": true,
+            "s3FieldDelimiter": ",",
+            "s3DirIncludesNested": false,
+            "s3AddsFilenameColumn": false
+          }
+        }
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "default",
+          "sampling": {
+            "sampling_method": "sample_by_limit",
+            "limit_rows": 50000
+          }
+        }
+      ]
+    },
+    {
+      "node_id": "e9697d76-14f3-4972-b52f-1c11d90d65a9",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.infer_and_cast_type_0.1",
+      "parameters": {},
+      "trained_parameters": {
+        "schema": {
+          "date": "date",
+          "ice_cream_type": "long",
+          "topping": "long",
+          "location": "long"
+        }
+      },
+      "inputs": [
+        {
+          "name": "default",
+          "node_id": "c1f880fb-d6ce-48e1-be40-92980f1e347a",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "36d1a02f-fc9a-4dd5-adc0-b4363f71e244",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.featurize_date_time_0.1",
+      "parameters": {
+        "operator": "Extract columns",
+        "extract_columns_parameters": {
+          "output_mode": "Ordinal",
+          "output_format": "Columns",
+          "infer_datetime_format": false,
+          "date_time_format": "",
+          "year": true,
+          "month": true,
+          "day": true,
+          "hour": false,
+          "minute": false,
+          "second": false,
+          "week_of_year": false,
+          "day_of_year": false,
+          "quarter": false,
+          "input_column": "date"
+        }
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "e9697d76-14f3-4972-b52f-1c11d90d65a9",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "8b633223-c3a1-4761-93c2-c9445650bcb2",
+      "type": "VISUALIZATION",
+      "operator": "sagemaker.visualizations.describe_0.1",
+      "parameters": {
+        "name": "Data Summary"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "e9697d76-14f3-4972-b52f-1c11d90d65a9",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "97adf9f6-030c-435b-81df-9a8c4aebcc58",
+      "type": "VISUALIZATION",
+      "operator": "sagemaker.visualizations.describe_0.1",
+      "parameters": {
+        "name": "Summary"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "36d1a02f-fc9a-4dd5-adc0-b4363f71e244",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "fb0217f1-1d8e-4a8c-b8ca-ae576ed1167c",
+      "type": "VISUALIZATION",
+      "operator": "sagemaker.visualizations.histogram_0.1",
+      "parameters": {
+        "name": "Distribution",
+        "x_axis": "ice_cream_type",
+        "color_by": "topping",
+        "facet_by": "location"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "36d1a02f-fc9a-4dd5-adc0-b4363f71e244",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    }
+  ]
+}
